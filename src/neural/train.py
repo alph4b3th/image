@@ -30,3 +30,4 @@ class Trainer():
                 if self.batch % 100 == 0:
                     loss, current = loss.item(),(self.batch+1) * len(data)
                     print(f"loss: {loss:>7f} [{current:>5d}|{size:>5d}] ({current/size*100:.2f}% - epoch:{epoch:>5d})")
+                    torch.save(self.model, 'model.pth')
