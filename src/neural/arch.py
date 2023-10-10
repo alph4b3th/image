@@ -12,15 +12,38 @@ class Reshape(torch.nn.Module):
 class Model(torch.nn.Module):
     def __init__(self, device='cpu'):
         super(Model, self).__init__()
-        self.activation = torch.nn.Sigmoid()
+        self.act_layer = torch.nn.Tanh()
+        self.act_out = torch.nn.Sigmoid()
         self.flatten = torch.nn.Flatten()
         self.layers = torch.nn.Sequential(
-                torch.nn.Linear(28*28, 3028),
-                self.activation,
-                torch.nn.Linear(3028, 3028),
-                self.activation,
-                torch.nn.Linear(3028, 512),
-                self.activation,
+                torch.nn.Linear(28*28, 128),
+                self.act_layer,
+                torch.nn.Linear(128, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 512),
+                self.act_layer,
+                torch.nn.Linear(512, 2048),
+                self.act_layer,
+                torch.nn.Linear(2048, 2048),
+                self.act_layer,
+                torch.nn.Linear(2048, 2048),
+                self.act_layer,
+                torch.nn.Linear(2048, 2048),
+                self.act_layer,
+                torch.nn.Linear(2048, 512),
+                self.act_layer,
                 torch.nn.Linear(512,28*28),
                 )
         self.final_shape = torch.nn.Sequential(
@@ -32,5 +55,5 @@ class Model(torch.nn.Module):
         input = self.flatten(input)
         logits = self.layers(input)
         logits = self.final_shape(logits)
-        logits = self.activation(logits)
+        logits = self.act_out(logits)
         return logits

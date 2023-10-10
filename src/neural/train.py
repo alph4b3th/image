@@ -1,7 +1,7 @@
 import torch
 
 class Trainer():
-    def __init__(self, model, dataloader, lr=1e-3, batch=64, epochs=10):
+    def __init__(self, model, dataloader, lr=1e-3, foreach:bool=True, batch=64, epochs=10):
        self.lr = lr
        self.batch = batch
        self.epochs = epochs
@@ -14,11 +14,16 @@ class Trainer():
             self.fail("dataloader is nil")
 
        self.loss_fn = torch.nn.MSELoss ()
-       self.optimizer = torch.optim.SGD(model.parameters(), lr=self.lr)
+       self.optimizer = torch.optim.SGD(model.parameters(), lr=self.lr, foreach=foreach)
 
-    def StartLoopTrain(self):
-        size = len(self.dataloader.dataset)
+    def StartLoopTrain(self, dir_in:str="model.pth", dir_out:str="model.pth", load_weights:bool=False):
+        if load_weights:
+            print("loading model weights...")
+            self.model =  torch.load(dir_in)
+
         self.model.train()
+
+        size = len(self.dataloader.dataset)
         for epoch in range (self.epochs):
             for self.batch, (data, label) in enumerate(self.dataloader):
                 pred = self.model(data)
@@ -30,4 +35,4 @@ class Trainer():
                 if self.batch % 100 == 0:
                     loss, current = loss.item(),(self.batch+1) * len(data)
                     print(f"loss: {loss:>7f} [{current:>5d}|{size:>5d}] ({current/size*100:.2f}% - epoch:{epoch:>5d})")
-                    torch.save(self.model, 'model.pth')
+                    torch.save(self.model, dir_out)
